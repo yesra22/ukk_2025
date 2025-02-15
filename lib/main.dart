@@ -1,24 +1,12 @@
-
-import 'package:flutter/widgets.dart';
-
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-import 'home_page_model.dart';
-export 'home_page_model.dart';
+import 'package:ukk_2025/beranda.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) :super (key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +28,26 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
-  late HomePageModel _model;
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  String errorMessage = '';
 
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  void validateLogin() {
+    String username = usernameController.text;
+    String password = passwordController.text;
 
-  @override
-  void Dispose() {
-    super.dispose();
+    if (username == "admin" && password == "password123") {
+      setState(() {
+        errorMessage = "Login Berhasil";
+      });
+
+      Navigator.push(context,
+         MaterialPageRoute(builder: (context) => HomePage()));
+    } else {
+      setState(() {
+        errorMessage = "Username atau Password salah!";
+      });
+    }
   }
 
 
@@ -57,86 +58,92 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        backgroundColor: const Color(0xFF6CFF03),
         appBar: AppBar(
-          backgroundColor: Color(0xFF6CFF03),
+          backgroundColor: const Color(0xFF6CFF03),
           title: const Text(
             'Login',
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w900,
-              fontStyle: FontStyle.italic
+              fontStyle: FontStyle.italic,
             ),
           ),
-          centerTitle: false,
+          centerTitle: true,
           elevation: 2,
-         ),
-         body: SafeArea(
-          top: true,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: Image.asset('assets/images/download.png',fit: BoxFit.cover),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'DolotGunStore',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                    fontStyle: FontStyle.italic
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      print('Button pressed ...');
-                    },
-                    child: const Text('User Name'),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: (){
-                      print('Button pressed')
-                    },
-                    child: const Text('Password'),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: (){
-                      print('Sign In pressed ...')
-                    },
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF23F400)),
-                    child: const Text('Sign In'),
-                  )
-                  )
-                )
-              ],
-            )),
-         ),
         ),
-      );
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: Image.asset(
+                        'assets/images/download.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    TextField(
+                      controller: usernameController,
+                      decoration: InputDecoration(
+                        labelText: "Username",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: "Password",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    Text(
+                      errorMessage,
+                      style: TextStyle(
+                        color: errorMessage == "Login Berhasil" ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    ElevatedButton(
+                      onPressed: validateLogin,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF23F400),
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      ),
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
-  
-  FFButtonOptions({required int height, required EdgeInsetsDirectional padding, required EdgeInsetsDirectional iconPadding, required color, required textStyle, required int elevation, required BorderRadius borderRadius}) {}
-}
-
-FFButtonWidget({required Null Function() onPressed, required String text, required options}) {
-}
-
-class FlutterFlowTheme {
-  static of(BuildContext context) {}
-}
-
-class HomePageModel {
-  void dispose() {}
 }
 
