@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 void main () {
-  runApp(const MyWidget());
-  
+  runApp(const MyApp());
 }
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +27,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectIndex = 0;
+  final GlobalKey<_ProductsPageState> _productsPageKey = GlobalKey<_ProductsPageState>();
 
   final List<Widget> _pages = [
-    ProductsPage(),
-    CustomersPage(),
+    ProductsPage(key: _ProductsPageState()),
+    CustomerPage(),
     SalesPage(),
     SalesDetailPage(),
   ];
-
-  final GlobalKey<_ProductsPageState> _productsPageKey = GlobalKey();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -63,8 +62,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.shopping_bag),
-              title: const Text('Produk'),
+              leading: const Icon(Icons.people),
+              title: const Text('Akun'),
               onTap: () {
                 _onItemTapped(0);
                 Navigator.pop(context);
@@ -79,7 +78,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.people),
+              leading: const Icon(Icons.receipt),
               title: const Text('Penjualan'),
               onTap: () {
                 _onItemTapped(2);
@@ -87,13 +86,13 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.people),
+              leading: const Icon(Icons.receipt),
               title: const Text('Detail Penjualan'),
               onTap: () {
                 _onItemTapped(3);
                 Navigator.pop(context);
               },
-            ),
+            )
           ],
         ),
       ),
@@ -128,9 +127,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () async {
             String? newProduct = await _showProductDialog(context);
             if (newProduct != null && newProduct.isNotEmpty) {
-              setState(() {
                 _productsPageKey.currentState?.addProduct(newProduct);
-              });
             }
           },
           backgroundColor: Colors.green,
@@ -170,10 +167,11 @@ class _HomePageState extends State<HomePage> {
 }
 
 class ProductsPage extends StatefulWidget {
-  const ProductsPage({Key? Key}) : super(key: Key);
+  const ProductsPage({Key? key}) : super(key: key);
 
   @override
   _ProductsPageState createState () =>  _ProductsPageState();
+  
   }
 
 class _ProductsPageState extends State<ProductsPage> {
@@ -199,108 +197,183 @@ class _ProductsPageState extends State<ProductsPage> {
   
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-}
-
-  @override
-  Widget  build(BuildContext context) {
     return Scaffold(
-      body: products.isEmpty
-      ? const Center(
-        child: Text(
-          'Belum ada produk',
-          style: TextStyle(fontSize: 18),
-        ),
-      )
-      : ListView.builder(
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(products[index]),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red,
-            ),
-            onPressed: () => deleteProducts(index),
-          ),
-          onTap: () async {
-            String? newProduct = await _showProductDialog(context, initialText: products[index]);
-            if (newProduct != null && newProduct.isNotEmpty) {
-              editProducts(index, newProduct);
-            }
-          },
-        );
-      }
-    ),
-    );
-  }
-  
-    
-    
-    
-    
-
-Future<String?> _showProductDialog(BuildContext context, {String? initialText}) async {
-  TextEditingController controller = TextEditingController(text: initialText);
-  return showDialog(
-    context: context,
-     builder: (context) {
-      return AlertDialog(
-        title: Text(initialText == null ? 'Tambah Produk' : 'Edit Produk'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(hintText: 'Nama Produk'),
-        ),
+      appBar: AppBar(
+        title: const Text('Daftar Produk'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Batal')
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, controller.text);
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () async {
+              String? newProduct = await _showProductDialog(context);
+              if (newProduct != null && newProduct.isNotEmpty) {
+                addProduct(newProduct);
+              }
             },
-            child: const Text('Simpan'),
-           )
+          )
         ],
+      ),
+      body: products.isEmpty
+          ? const Center(child: Text('Belum ada produk', style: TextStyle(fontSize: 18)))
+          : ListView.builder(
+              itemCount: products.length,
+              itemBuilder: (context, index) => ListTile(
+                title: Text(products[index]),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => deleteProduct(index),
+                ),
+                onTap: () async {
+                  String? newProduct = await _showProductDialog(context, initialText: products[index]);
+                  if (newProduct != null && newProduct.isNotEmpty) editProduct(index, newProduct);
+                },
+              ),
+            ),
+    );
+  }
+
+  Future<String?> _showProductDialog(BuildContext context, {String? initialText}) async {
+    TextEditingController controller = TextEditingController(text: initialText);
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(initialText == null ? 'Tambah Produk' : 'Edit Produk'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'Nama Produk'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, controller.text);
+              },
+              child: const Text('Simpan'),
+            )
+          ],
+        );
+      },
+    );
+  }
+}
+
+  class CustomerPage extends StatefulWidget {
+    @override
+    _CustomerPageState createState() => _CustomerPageState();
+  }
+
+  class _CustomerPageState extends State<CustomerPage> {
+      List<String>customers = [];
+
+    void addCustomers(String customer) {
+      setState(() {
+        customers.add(customer) ;
+      });
+    }
+
+    void deleteCustomers(int index) {
+      setState(() {
+        customers.removeAt(index);
+      });
+    }
+
+    void editCustomer(int index, String newCustomer) {
+      setState(() {
+        customers[index] = newCustomer;
+      });
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Daftar Pelanggan'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                String? newCustomer = await _showCustomerDialog(context);
+                if (newCustomer != null && newCustomer.isNotEmpty) {
+                  addCustomers(newCustomer);
+                }
+              },
+              )
+          ],
+        ),
+        body: customers.isEmpty
+        ? const Center(child: Text('Belum ada pelanggan', style: TextStyle(fontSize: 18)))
+        :ListView.builder(
+          itemCount: customers.length,
+          itemBuilder: (context, index) => ListTile(
+            title: Text(customers[index]),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => deleteCustomers(index),
+              ),
+              onTap: () async {
+                String? newCustomer = await _showCustomerDialog(context, initialText: customers[index]);
+                if (newCustomer != null && newCustomer.isNotEmpty) {
+                  editCustomer(index, newCustomer);
+                }
+              },
+          ),
+        )
       );
-     }
-  );
-}
-
-class CustomersPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Halaman Pelanggan',
-        style: TextStyle(fontSize: 24),
-      ),
-    );
+    }
+    Future<String?> _showCustomerDialog(BuildContext context, {String? initialText}) async {
+      TextEditingController controller = TextEditingController(text: initialText);
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(initialText == null ? 'Tambah Pelanggan' : 'Edit Pelanggan'),
+            content: TextField(
+              controller: controller,
+              decoration: const InputDecoration(hintText: 'Nama Pelanggan'),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Batal'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, controller.text);
+                    },
+                    child: const Text('Simpan'),
+                    ),
+              ],
+          );
+        }
+        );
+    }
   }
-}
 
-class SalesPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Halaman Penjualan',
-        style: TextStyle(fontSize: 24),
-      ),
-    );
+  class SalesPage extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      return Center(
+        child: Text(
+          'Halaman Penjualan',
+          style: TextStyle(fontSize: 24),
+        ),
+      );
+    }
   }
-}
 
-class SalesDetailPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Halaman Detail Penjualan',
-        style: TextStyle(fontSize: 24),
-      ),
-    );
+  class SalesDetailPage extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      return Center(
+        child: Text(
+          'Halaman Detail Penjualan',
+          style: TextStyle(fontSize: 24),
+        ),
+      );
+    }
   }
-}
+
+  
