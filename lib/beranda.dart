@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main () {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -27,13 +28,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectIndex = 0;
-  final GlobalKey<_ProductsPageState> _productsPageKey = GlobalKey<_ProductsPageState>();
+  final GlobalKey<ProductsPageState> _productsPageKey = GlobalKey<ProductsPageState>();
 
   final List<Widget> _pages = [
-    ProductsPage(key: _ProductsPageState()),
+    ProductsPage(),
     CustomerPage(),
-    SalesPage(),
-    SalesDetailPage(),
+    Placeholder(),
+    Placeholder(),
+    
   ];
 
   void _onItemTapped(int index) {
@@ -46,13 +48,15 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+       title: const Text(
+        'Dashboard',
+       ),
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.green,
               ),
@@ -62,8 +66,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.people),
-              title: const Text('Akun'),
+              leading: const Icon(Icons.shopping_bag),
+              title: const Text('Produk'),
               onTap: () {
                 _onItemTapped(0);
                 Navigator.pop(context);
@@ -86,7 +90,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.receipt),
+              leading: const Icon(Icons.details),
               title: const Text('Detail Penjualan'),
               onTap: () {
                 _onItemTapped(3);
@@ -167,14 +171,14 @@ class _HomePageState extends State<HomePage> {
 }
 
 class ProductsPage extends StatefulWidget {
-  const ProductsPage({Key? key}) : super(key: key);
+ const ProductsPage({Key? key}) : super(key: key);
 
   @override
-  _ProductsPageState createState () =>  _ProductsPageState();
+  ProductsPageState createState () =>  ProductsPageState();
   
   }
 
-class _ProductsPageState extends State<ProductsPage> {
+class ProductsPageState extends State<ProductsPage> {
   List<String> products = [];
 
   void addProduct(String product) {
@@ -231,6 +235,7 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
+  
   Future<String?> _showProductDialog(BuildContext context, {String? initialText}) async {
     TextEditingController controller = TextEditingController(text: initialText);
     return showDialog(
@@ -260,6 +265,7 @@ class _ProductsPageState extends State<ProductsPage> {
   }
 }
 
+  
   class CustomerPage extends StatefulWidget {
     @override
     _CustomerPageState createState() => _CustomerPageState();
@@ -352,28 +358,5 @@ class _ProductsPageState extends State<ProductsPage> {
     }
   }
 
-  class SalesPage extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-      return Center(
-        child: Text(
-          'Halaman Penjualan',
-          style: TextStyle(fontSize: 24),
-        ),
-      );
-    }
-  }
-
-  class SalesDetailPage extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-      return Center(
-        child: Text(
-          'Halaman Detail Penjualan',
-          style: TextStyle(fontSize: 24),
-        ),
-      );
-    }
-  }
-
+  
   

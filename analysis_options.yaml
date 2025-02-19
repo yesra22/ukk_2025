@@ -11,6 +11,7 @@ analyzer:
   errors:
     depend_on_referenced_packages: ignore
     duplicate_import: ignore
+    override_on_non_overriding_member: ignore
     prefer_const_constructors: ignore ignore ignore
     unused_import: ignore
 include: package:flutter_lints/flutter.yaml

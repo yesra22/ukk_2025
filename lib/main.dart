@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:ukk_2025/beranda.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://jwgthlmjsuccptiwhdsr.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Z3RobG1qc3VjY3B0aXdoZHNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MTUzMTQsImV4cCI6MjA1NDk5MTMxNH0.DlqCI4jnW3QsbK0GQmqXIJJCaxoUWg6-H92GBqx3_Ag',
+    );
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -19,7 +24,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class HomePageWidget extends StatefulWidget {
   const HomePageWidget({super.key});
 
